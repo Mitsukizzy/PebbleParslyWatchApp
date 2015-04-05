@@ -2,8 +2,6 @@ var UI = require('ui');
 var ajax = require('ajax');
 var Vector2 = require('vector2');
 var Accel = require('ui/accel');
-var Vibe = require('ui/vibe');
-
 
 var parseFeed = function(data, quantity){  
   var items = [];
@@ -93,32 +91,37 @@ resultsMenu.on('select', function(e) {
     
     // Register for 'tap' events
     resultsMenu.on('accelTap', function(e) {
-      // Make another request to openweathermap.org
-      ajax(
-        {
-          url:'http://api.openweathermap.org/data/2.5/forecast?q=London',
-          type:'json'
-        },
-        function(data) {
-          // Create an array of Menu items
-          var newItems = parseFeed(data, 10);
-          
-          // Update the Menu's first section
-          resultsMenu.items(0, newItems);
-          
-          // Notify the user
-          Vibe.vibrate('short');
-        },
-        function(error) {
-          console.log('Download failed: ' + error);
-        }
-      );
-    });
-  },
-  function(error) {
-    console.log("Download failed: " + error);
-  }
-);
+      ajax({
+          url: 'https://api.twilio.com/2010-04-01/Accounts/ACb36008b90fe062ce85cea28126fef00c/SMS/Messages.json',
+          data: { Body: 'open garage',
+                  To: '+17024275113',
+                 From: '+17024307158' },
+          headers: { Authorization: 'Basic ' + base64_encode('ACb36008b90fe062ce85cea28126fef00c:c78c76f1fbab13a565c46225b6976c07') },
+        }, function success(){
+            console.log("Success");
+        }, function failure(){
+            console.log("Failure");
+        });   
+      });       
 
-// Prepare the accelerometer
-Accel.init();
+    // Prepare the accelerometer
+    Accel.init();
+  });
+
+function base64_encode(input) {
+	var keyStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+	var chr1, chr2, chr3, enc1, enc2, enc3, enc4, output = '', i = 0;
+	do {
+		chr1 = input.charCodeAt(i++);
+		chr2 = input.charCodeAt(i++);
+		chr3 = input.charCodeAt(i++);
+		enc1 = chr1 >> 2;
+		enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+		enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+		enc4 = chr3 & 63;
+		if (isNaN(chr2)) { enc3 = enc4 = 64; } else if (isNaN(chr3)) { enc4 = 64; }
+		output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2) + keyStr.charAt(enc3) + keyStr.charAt(enc4);
+		chr1 = chr2 = chr3 = enc1 = enc2 = enc3 = enc4 = '';
+	} while (i < input.length);
+	return output;
+}
