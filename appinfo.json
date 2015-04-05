@@ -28,11 +28,6 @@
                 "file": "fonts/UbuntuMono-Regular.ttf",
                 "name": "MONO_FONT_14",
                 "type": "font"
-            },
-            {
-                "file": "images/parsley.png",
-                "name": "IMAGES_PARSLEY_PNG",
-                "type": "png"
             }
         ]
     },
